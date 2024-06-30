@@ -5,6 +5,31 @@
     <title>VoxPop - Comments</title>
 </head>
 <body>
-
+    <h1>VoxPop - Comments</h1>
+    <form action="/comments" method="post">
+        <label for="text">Comment:</label>
+        <input type="text" id="text" name="text" required>
+        <label for="category">Category:</label>
+        <select id="category" name="category" required>
+            <option value="positive">Positive</option>
+            <option value="negative">Negative</option>
+        </select>
+        <button type="submit">Submit</button>
+    </form>
+    <h2>Comments:</h2>
+    <ul>
+        {% for comment in comments %}
+        <li>
+            <strong>{{ comment.category }}:</strong> {{ comment.text }}
+        </li>
+        {% endfor %}
+    </ul>
+    <div>
+        {% if page > 1 %}
+        <a href="/comments?page={{ page - 1 }}&limit={{ limit }}">Previous</a>
+        {% endif %}
+        <a href="/comments?page={{ page + 1 }}&limit={{ limit }}">Next</a>
+    </div>
+    <a href="/">Go back to home</a>
 </body>
 </html>
