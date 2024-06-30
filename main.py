@@ -32,3 +32,10 @@ def read_comments(request: Request, page: int = 1, limit: int = 10):
         "page": page,
         "limit": limit
     })
+
+@app.post("/comments")
+def post_comment(comment: Comment):
+    if comment not in ["positive", "negative"]:
+        raise HTTPException(status_code=400, detail="Comment must be either positive or negative")
+    comments.append(comment)
+    return comment
