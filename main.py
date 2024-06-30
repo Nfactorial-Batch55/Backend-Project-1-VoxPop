@@ -15,6 +15,20 @@ class Comment(BaseModel):
 
 templates = Jinja2Templates(directory="templates")
 
+
 @app.get("/")
 def read_root(request: Request):
-    return "hello world"
+    return templates.TemplateResponse("index.html", {"request": request})
+
+
+@app.get("/comments")
+def read_comments(request: Request, page: int = 1, limit: int = 10):
+    start = (page - 1) * limit
+    end = start + limit
+    pagination = comments[start:end]
+    return templates.TemplateResponse("comments.html", {
+        "request": request,
+        "comments": pagination,
+        "page": page,
+        "limit": limit
+    })
