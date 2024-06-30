@@ -4,6 +4,15 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
 app = FastAPI()
+
+comments = []
+
+
+class Comment(BaseModel):
+    text: str
+    category: str
+
+
 templates = Jinja2Templates(directory="templates")
 
 @app.get("/")
