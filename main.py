@@ -1,5 +1,5 @@
-from fastapi import FastAPI, HTTPException, Request
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI, HTTPException, Request, Form
+from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
@@ -12,6 +12,10 @@ class Comment(BaseModel):
     text: str
     category: str
 
+
+for i in range(1, 36):
+    comment = Comment(text=f"Test comment {i}", category="positive" if i % 2 == 0 else "negative")
+    comments.insert(0, comment)
 
 templates = Jinja2Templates(directory="templates")
 
@@ -33,9 +37,11 @@ def read_comments(request: Request, page: int = 1, limit: int = 10):
         "limit": limit
     })
 
+
 @app.post("/comments")
-def post_comment(comment: Comment):
-    if comment not in ["positive", "negative"]:
-        raise HTTPException(status_code=400, detail="Comment must be either positive or negative")
-    comments.append(comment)
-    return comment
+def post_comment(page: int = 1, limit: int = 10, text: str = Form(...), category: str = Form(...)):
+    if category not in ["positive", "negative"]:
+        raise HTTPException(status_code=400, detail="Category must be 'positive' or 'negative'")
+    comment = Comment(text=text, category=category)
+    comments.insert(0, comment)
+    return RedirectResponse(url=f"/comments?page={page}&limit={limit}", status_code=303)
